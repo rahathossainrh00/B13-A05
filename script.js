@@ -1,3 +1,4 @@
+
 // Login Function
 const signInButton = document.getElementById('signInButton');
 if (signInButton) {
@@ -22,6 +23,8 @@ if (signInButton) {
 function copyToClipboard(text) {
     navigator.clipboard.writeText(text);
 }
+
+
 
 // Fetch All Issues Function
 function fetchAllIssues() {
@@ -120,6 +123,7 @@ function showIssueCards(issueList) {
 
 }
 
+
 // Fetch Open Issues Function
 function fetchOpenIssues() {
     toggleSpinner(true)
@@ -154,5 +158,179 @@ function fetchClosedIssues() {
             highlightActiveFilter('close')
             toggleSpinner(false)
         })
+
+}
+
+
+// Show Issue Detail Modal Function
+function showIssueDetail(issueItem) {
+    let priorityBadge = "bg-[#FEECEC] text-[#EF4444]";
+    if (issueItem.priority === 'medium') priorityBadge = "bg-[#FEF3C7] text-[#D97706]";
+    if (issueItem.priority.toLowerCase() === "low") priorityBadge = "bg-[#DEFCE8] text-[#00A96E]";
+
+    document.getElementById("detailTitle").innerText = issueItem.title
+
+    document.getElementById("detailAuthor").innerHTML =
+        `<i class="fa-regular fa-user"></i> Opened by ${issueItem.author}`
+
+    document.getElementById("detailDate").innerHTML =
+        `<i class="fa-regular fa-calendar"></i> ${issueItem.createdAt}`
+
+    document.getElementById("detailDescription").innerText =
+        issueItem.description
+
+    document.getElementById("detailAssignee").innerText =
+        issueItem.author
+
+
+    const priorityElement = document.getElementById("detailPriority")
+    priorityElement.innerText = issueItem.priority.toUpperCase()
+    priorityElement.className = `font-medium px-4 py-1 text-sm rounded-full ${priorityBadge}`
+
+
+    document.getElementById("detailStatus").innerText =
+        issueItem.status
+
+    // labels
+    const labelArea = document.getElementById("detailLabels")
+
+    const labelsHtml = issueItem.labels.map(singleLabel => {
+        let labelBgColor = ""
+        let labelIcon = ""
+
+        if (singleLabel.toLowerCase() === "bug") {
+            labelBgColor = "bg-[#FEECEC] text-[#EF4444] border-[#FECACA] hover:bg-[#EF4444] hover:text-white";
+            labelIcon = "fa-solid fa-bug"
+        } else if (singleLabel.toLowerCase() === "help wanted") {
+            labelBgColor = "bg-[#FFF8DB] text-[#D97706] border-[#FDE68A] hover:bg-[#D97706] hover:text-white ";
+            labelIcon = "fa-solid fa-life-ring"
+        } else if (singleLabel.toLowerCase() === "enhancement") {
+            labelBgColor = "bg-[#DEFCE8] text-[#00A96E] border-[#BBF7D0] hover:bg-[#00A96E] hover:text-white";
+            labelIcon = "fa-solid fa-wand-magic-sparkles"
+        } else if (singleLabel.toLowerCase() === "documentation") {
+            labelBgColor = "bg-[#dbebff] text-[#5e88eb] border-[#5e88eb] hover:bg-[#5e88eb] hover:text-white";
+            labelIcon = "fa-solid fa-file-lines"
+        } else {
+            labelBgColor = "bg-[#ece4ff] text-[#a647ff] border-[#a647ff] hover:bg-[#a647ff] hover:text-white ";
+            labelIcon = "fa-solid fa-circle-info"
+        }
+        return `<span class="px-2 py-1 text-sm font-medium capitalize  rounded-full border ${labelBgColor}"><i class="${labelIcon}"></i> ${singleLabel}</span>`
+
+
+    }).join(" ");
+
+    labelArea.innerHTML = labelsHtml
+
+    document.getElementById("issueDetailModal").showModal()
+
+}
+
+// Highlight Active Filter Button Function
+function highlightActiveFilter(activeFilter) {
+    const filterNameToId = {
+        'all': 'filterAllButton',
+        'open': 'filterOpenButton',
+        'close': 'filterClosedButton'
+    };
+
+    const allButtonIds = ['filterAllButton', 'filterOpenButton', 'filterClosedButton'];
+    const activeButtonId = filterNameToId[activeFilter];
+
+    allButtonIds.forEach(buttonId => {
+        const buttonElement = document.getElementById(buttonId);
+        if (buttonElement) {
+            if (buttonId === activeButtonId) {
+                buttonElement.classList.add('btn-primary', 'text-white');
+                buttonElement.classList.remove('btn-outline', 'text-slate-500', 'border-slate-200');
+            } else {
+                buttonElement.classList.remove('btn-primary', 'text-white');
+                buttonElement.classList.add('btn-outline', 'text-slate-500', 'border-slate-200');
+            }
+        }
+    })
+}
+
+// Load issues on page load
+fetchAllIssues();
+
+// Search and Filter Setup Function
+function setupSearchAndFilters() {
+    const searchBox = document.getElementById('searchBox');
+    const issueCountElement = document.getElementById('totalIssueCount');
+
+    let activeTab = 'all';
+    let savedIssueList = [];
+
+    function getAllIssuesForSearch() {
+        fetch('https://phi-lab-server.vercel.app/api/v1/lab/issues')
+            .then(res => res.json())
+            .then(data => {
+                savedIssueList = data.data || [];
+                applySearchFilter();
+            });
+    }
+
+    function applySearchFilter() {
+
+        let matchingIssues = savedIssueList.filter(issueItem => {
+            if (activeTab === 'open') return issueItem.status.toLowerCase() === 'open';
+            if (activeTab === 'closed') return issueItem.status.toLowerCase() === 'closed';
+            return true;
+        });
+
+        const searchQuery = searchBox.value.trim().toLowerCase();
+        if (searchQuery) {
+            matchingIssues = matchingIssues.filter(issueItem =>
+                issueItem.title?.toLowerCase().includes(searchQuery) ||
+                issueItem.description?.toLowerCase().includes(searchQuery) ||
+                issueItem.priority.toLowerCase().includes(searchQuery) ||
+                issueItem.author.toLowerCase().includes(searchQuery) ||
+                issueItem.labels.join(" ").toLowerCase().includes(searchQuery) ||
+                issueItem.status.toLowerCase().includes(searchQuery) ||
+                issueItem.id.toString().includes(searchQuery)
+            );
+        }
+
+        showIssueCards(matchingIssues);
+        issueCountElement.innerText = matchingIssues.length;
+    }
+
+
+    if (searchBox) {
+        searchBox.addEventListener('input', applySearchFilter);
+    }
+
+
+    document.getElementById('filterAllButton')?.addEventListener('click', () => {
+        activeTab = 'all';
+        highlightActiveFilter('all');
+        applySearchFilter();
+    });
+    document.getElementById('filterOpenButton')?.addEventListener('click', () => {
+        activeTab = 'open';
+        highlightActiveFilter('open');
+        applySearchFilter();
+    });
+    document.getElementById('filterClosedButton')?.addEventListener('click', () => {
+        activeTab = 'closed';
+        highlightActiveFilter('close');
+        applySearchFilter();
+    });
+
+    getAllIssuesForSearch();
+}
+
+// Initialize search and filters on page load
+setupSearchAndFilters();
+
+// Toggle Spinner Function
+function toggleSpinner(isVisible) {
+    const spinnerEl = document.getElementById('spinnerElement')
+
+    if (isVisible) {
+        spinnerEl.classList.remove("hidden")
+    } else {
+        spinnerEl.classList.add("hidden")
+    }
 
 }
