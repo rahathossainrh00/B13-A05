@@ -108,6 +108,53 @@
         </div>
     </section>
 
+     <!-- Modal  -->
+    <dialog id="issueDetailModal" class="modal modal-bottom sm:modal-middle ">
+        <div class="modal-box space-y-6 ">
+            <h3 id="detailTitle" class="text-2xl font-bold ">Fix broken image uploads</h3>
+
+            <div class="flex flex-row gap-2 items-center ">
+                <span id="detailStatus"
+                    class="font-medium px-4 py-1 text-sm rounded-full bg-[#00A96E] text-white border-[#BBF7D0] hover:bg-[#DEFCE8] hover:text-[#00A96E]">Opened</span>
+                <p id="detailAuthor" class="text-[#64748B] text-sm "><i class="fa-regular fa-user"></i> Opened by Fahim
+                    Ahmed</p><span id="detailDate" class="text-sm text-[#64748B]"><i class="fa-regular fa-calendar"></i>
+                    22/02/2026</span>
+            </div>
+
+            <div id="detailLabels">
+                <span
+                    class="font-medium px-4 py-1 text-sm rounded-full border bg-[#FEECEC] text-[#EF4444] border-[#FECACA] hover:bg-[#EF4444] hover:text-white"><i
+                        class="fa-solid fa-bug"></i> BUG</span>
+                <span
+                    class="font-medium px-4 py-1 text-sm rounded-full border bg-[#FFF8DB] text-[#D97706] border-[#FDE68A] hover:bg-[#D97706] hover:text-white"><i
+                        class="fa-solid fa-life-ring"></i> HELP WANTED</span>
+            </div>
+
+            <p id="detailDescription" class="text-[#64748B]">The navigation menu doesn't collapse properly on mobile
+                devices. Need to fix the responsive behavior.</p>
+
+            <div class="flex items-center justify-between rounded-lg bg-gray-50 border-gray-200 border w-full p-5 ">
+                <div class="space-y-3">
+                    <p class="text-[#64748B]">Assignee:</p>
+                    <h2 id="detailAssignee" class="font-bold">Fahim Ahmed</h2>
+                </div>
+                <div class="space-y-3">
+                    <p class="text-[#64748B]">Priority:</p>
+                    <span id="detailPriority" class="">HIGH</span>
+                </div>
+            </div>
+
+            <div class="modal-action">
+                <form method="dialog">
+
+                    <!-- if there is a button in form, it will close the modal -->
+                    <button class="btn btn-primary">Close</button>
+                </form>
+            </div>
+
+        </div>
+    </dialog>
+
 </body>
 
 </html>
