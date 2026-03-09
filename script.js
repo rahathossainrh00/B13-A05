@@ -119,3 +119,40 @@ function showIssueCards(issueList) {
     })
 
 }
+
+// Fetch Open Issues Function
+function fetchOpenIssues() {
+    toggleSpinner(true)
+    fetch('https://phi-lab-server.vercel.app/api/v1/lab/issues')
+        .then(res => res.json())
+        .then(data => {
+
+            const openIssueList = data.data.filter(issueItem => issueItem.status.toLowerCase() === "open")
+
+            showIssueCards(openIssueList)
+
+            document.getElementById("totalIssueCount").innerText = openIssueList.length
+            highlightActiveFilter('open')
+            toggleSpinner(false)
+        })
+
+
+}
+
+// Fetch Closed Issues Function
+function fetchClosedIssues() {
+    toggleSpinner(true)
+    fetch('https://phi-lab-server.vercel.app/api/v1/lab/issues')
+        .then(res => res.json())
+        .then(data => {
+
+            const closedIssueList = data.data.filter(issueItem => issueItem.status.toLowerCase() === "closed")
+
+            showIssueCards(closedIssueList)
+
+            document.getElementById("totalIssueCount").innerText = closedIssueList.length
+            highlightActiveFilter('close')
+            toggleSpinner(false)
+        })
+
+}
