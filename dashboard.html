@@ -61,6 +61,18 @@
         </div>
     </header>
 
+    <!-- filter buttons -->
+    <section class="max-w-7xl mx-auto px-4 mt-6 md:mt-12">
+        <div class="bg-white rounded-lg shadow-sm p-5 md:p-6 grid grid-cols-3 gap-3 md:flex md:w-full ">
+            <button id="filterAllButton" onclick="fetchAllIssues();"
+                class="btn btn-outline border-slate-200 text-slate-500 rounded-md px-10">All</button>
+            <button id="filterOpenButton" onclick="fetchOpenIssues()"
+                class="btn btn-outline border-slate-200 text-slate-500 rounded-md px-10">Open</button>
+            <button id="filterClosedButton" onclick="fetchClosedIssues()"
+                class="btn btn-outline border-slate-200 text-slate-500 rounded-md px-10">Closed</button>
+        </div>
+    </section>
+
 </body>
 
 </html>
